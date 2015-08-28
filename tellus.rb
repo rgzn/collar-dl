@@ -17,11 +17,32 @@
 
 require 'mechanize'
 require 'open-uri'
+require 'optparse'
+
+options = {:user => nil, :password => nil}
+pasrser = OptionParser.new do |opts|
+	opts.banner = "Usage: tellus.rb [options]"
+	opts.on('-u', '--username user', 'Username') do |user|
+		options[:user] = user
+	end
+	opts.on('-p', '--password password', 'Password') do |password|
+		options[:password] = password
+	end
+	opts.on('-h', '--help', 'Displays Help') do
+		puts opts
+		exit
+	end
+end
+
+parser.parse!
 
 # Login Information
 tellusURL = "http://tellus.televilt.se/"
-tellusLogin = "Clinton@osu"
-tellusPassword = "8c000c"
+#tellusLogin = "Clinton@osu"
+#tellusPassword = "8c000c"
+
+tellusLogin = options[:user] 
+tellusPassword = options[:password]
 
 # Download info
 downloadDir = "./data/tellus/"
