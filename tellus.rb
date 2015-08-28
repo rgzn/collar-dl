@@ -20,7 +20,7 @@ require 'open-uri'
 require 'optparse'
 
 options = {:user => nil, :password => nil}
-pasrser = OptionParser.new do |opts|
+parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
 	opts.on('-u', '--username user', 'Username') do |user|
 		options[:user] = user
