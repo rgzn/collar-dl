@@ -19,6 +19,8 @@ require 'mechanize'
 require 'open-uri'
 require 'optparse'
 
+
+# Command Line Options
 options = {:user => nil, :password => nil, :dir => "./data/tellus/"}
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
@@ -36,7 +38,6 @@ parser = OptionParser.new do |opts|
 		exit
 	end
 end
-
 parser.parse!
 
 # Login Information
@@ -71,23 +72,23 @@ a.submit(loginForm, loginButton)
 
 # Get download links
 dataPage = a.page.link_with(:text => /Position/).click
-collarLinks = dataPage.links_with(:text => "Download Data")
 pageLinks = dataPage.links_with(:href => /page=\d$/)
-pageLinks.each do |link|
-	collarLinks += link.click.links_with(:text => "Download Data")
-end
 
-
-# Download data for each collar for appropriate dates
-collarLinks.each do |collarLink|
-	collarPage = collarLink.click
-	downloadForm = collarPage.forms[1]
-	downloadButton = downloadForm.button_with(:name => /download/)
-	downloadForm.field_with(:name => /start_year/).value = dateStart.year
-	downloadForm.field_with(:name => /start_month/).value = dateStart.month
-	downloadForm.field_with(:name => /start_day/).value = dateStart.day
-	r = a.submit(downloadForm, downloadButton);
-	r.save(downloadDir+r.filename)
+# Loop over download pages, start with current page
+pageLinks.each do |pageLink|
+	# Download data for each collar for appropriate dates
+	collarLinks = dataPage.links_with(:text => "Download Data")
+	collarLinks.each do |collarLink|
+		collarPage = collarLink.click
+		downloadForm = collarPage.forms[1]
+		downloadButton = downloadForm.button_with(:name => /download/)
+		downloadForm.field_with(:name => /start_year/).value = dateStart.year
+		downloadForm.field_with(:name => /start_month/).value = dateStart.month
+		downloadForm.field_with(:name => /start_day/).value = dateStart.day
+		r = a.submit(downloadForm, downloadButton);
+		r.save(downloadDir+r.filename) unless r.body.match(/(.*)No data.+/)
+	end
+	dataPage = pageLink.click
 end
 
 # Logout
