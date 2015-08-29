@@ -19,7 +19,7 @@ require 'mechanize'
 require 'open-uri'
 require 'optparse'
 
-options = {:user => nil, :password => nil}
+options = {:user => nil, :password => nil, :dir => "./data/tellus/"}
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
 	opts.on('-u', '--username user', 'Username') do |user|
@@ -27,6 +27,9 @@ parser = OptionParser.new do |opts|
 	end
 	opts.on('-p', '--password password', 'Password') do |password|
 		options[:password] = password
+	end
+	opts.on('-d', '--dir dir', 'Directory') do |dir|
+		options[:dir] = dir
 	end
 	opts.on('-h', '--help', 'Displays Help') do
 		puts opts
@@ -45,7 +48,7 @@ tellusLogin = options[:user]
 tellusPassword = options[:password]
 
 # Download info
-downloadDir = "./data/tellus/"
+downloadDir = options[:dir] 
 
 # Date Information
 dateNow = Date.today
@@ -69,6 +72,11 @@ a.submit(loginForm, loginButton)
 # Get download links
 dataPage = a.page.link_with(:text => /Position/).click
 collarLinks = dataPage.links_with(:text => "Download Data")
+pageLinks = dataPage.links_with(:href => /page=\d$/)
+pageLinks.each do |link|
+	collarLinks += link.click.links_with(:text => "Download Data")
+end
+
 
 # Download data for each collar for appropriate dates
 collarLinks.each do |collarLink|
