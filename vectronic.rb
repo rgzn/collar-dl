@@ -87,7 +87,7 @@ collarList.each do |collar|
 		#csvOut = CSV.new("", :headers => header, :write_headers => true, :return_headers => true)
 		doc.xpath('//table//tr').each do |row|
 			row = rowStart
-			row.xpath('td') each do |cell|
+			row.xpath('td').each do |cell|
 				row += cell.text.gsub("\n", ' ').gsub('"', '\"').gsub(/(\s){2,}/m, '\1')
 			end
 			open(csvFile, 'w') do |f|
