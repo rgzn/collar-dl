@@ -10,6 +10,7 @@ require 'nokogiri'
 require 'mechanize'
 require 'open-uri'
 require 'fileutils'
+require 'csv'
 
 # login stuff
 url = "https://www.vectronic-wildlife.com"
@@ -29,8 +30,7 @@ downloadDir = "data/vectronic/" + dbName + "/"
 FileUtils::mkdir_p downloadDir unless File.exists?(downloadDir)
 #class AttachmentSaver < Mechanize::File
 #	attr_reader :gdf
-
-
+CSV_DELIM = "\1"
 
 # Date Information
 dateNow = Date.today
@@ -64,16 +64,48 @@ collarList.each do |collar|
 	a.get(dataUrl)
 
 	# Save html table
-	filename = downloadDir + collar + ".html"
-	open(filename, 'w') { 
-		|f| f << a.page.body 
-	} unless a.page.body.include? "No data found"
+	# filename = downloadDir + collar + ".html"
+	# open(filename, 'w') { 
+	# 	|f| f << a.page.body 
+	# } unless a.page.body.include? "No data found"
+
+	# Convert html to csv
+	unless a.page.body.include? "No data found" then 
+		csvFile = downloadDir + collar + ".csv"
+		doc = a.page.parser
+		caption = doc.xpath('//table//caption').text
+		name = caption.split[0]
+		ID = caption.scan(/Animal ID: \d+/).first.scan(/\d+/)
+		sex = caption.scan(/Gender: [A-Za-z]+/).first.split[1]
+		header = ["Name", "ID", "Sex"]
+		rowStart = [name, ID, sex]
+		doc.xpath('//table//thead/th').each {|cell| header.push(cell.text)}
+		open(csvFile, 'w') do |f|
+			header.each { |cell| f << cell + "\t" }
+			f << "\n"
+		end
+		#csvOut = CSV.new("", :headers => header, :write_headers => true, :return_headers => true)
+		doc.xpath('//table//tr').each do |row|
+			row = rowStart
+			row.xpath('td') each do |cell|
+				row += cell.text.gsub("\n", ' ').gsub('"', '\"').gsub(/(\s){2,}/m, '\1')
+			end
+			open(csvFile, 'w') do |f|
+				row.each { |cell| f << cell + "\t" }
+				f << "\n"
+			end
+		end
+	end
+
+
+		
+		
 
 	# Save GDF
-	if a.page.link_with(:text => /gdf/i) then 
-		r = a.page.link_with(:text => /gdf/i).click 
-		r.save(downloadDir+r.filename)
-	end
+	# if a.page.link_with(:text => /gdf/i) then 
+	# 	r = a.page.link_with(:text => /gdf/i).click 
+	# 	r.save(downloadDir+r.filename)
+	# end
 
 end
 
