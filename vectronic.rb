@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+# vectronic.rb
+# This script downloads all collar data from the 
+# vectronic-wildlife website. 
+# It ignores collars with no data for the 
+# specified time period.
+
 require 'nokogiri'
 require 'mechanize'
 require 'open-uri'

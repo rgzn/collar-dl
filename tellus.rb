@@ -71,7 +71,6 @@ loginButton = loginForm.button_with(:name => /login/)
 a.submit(loginForm, loginButton)
 
 # Get download links
-
 pageLinks = a.page.links_with(:text => /Position/)
 dataPage = pageLinks.first.click
 pageLinks += dataPage.links_with(:href => /page=\d$/)
