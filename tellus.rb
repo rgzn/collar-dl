@@ -18,7 +18,9 @@
 require 'mechanize'
 require 'open-uri'
 require 'optparse'
-
+require 'csv'
+require 'fileutils'
+require 'tempfile'
 
 # Command Line Options
 options = {:user => nil, :password => nil, :dir => "./data/tellus/"}
@@ -75,9 +77,6 @@ pageLinks = a.page.links_with(:text => /Position/)
 dataPage = pageLinks.first.click
 pageLinks += dataPage.links_with(:href => /page=\d$/)
 
-# dataPage = a.page.link_with(:text => /Position/).click
-# pageLinks = dataPage.links_with(:href => /page=\d$/)
-
 # Loop over download pages, start with current page
 pageLinks.each do |pageLink|
 	dataPage = pageLink.click
@@ -90,8 +89,24 @@ pageLinks.each do |pageLink|
 		downloadForm.field_with(:name => /start_year/).value = dateStart.year
 		downloadForm.field_with(:name => /start_month/).value = dateStart.month
 		downloadForm.field_with(:name => /start_day/).value = dateStart.day
-		r = a.submit(downloadForm, downloadButton);
-		r.save(downloadDir+r.filename) unless r.body.match(/(.*)No data.+/)
+		r = a.submit(downloadForm, downloadButton)
+		unless r.body.match(/(.*)No data.+/) then
+			outputCSV = downloadDir+r.filename
+			collarName = r.filename.scan(/[^_]+/).first
+			2.times { r.body.sub!(/.*\n/,'') } 		# remove first 2 lines of csv content
+			r.body.sub!(/^/,"Collar\t") 			# add a Collar column 
+			#r.save(outputCSV)
+			temp = Tempfile.new("csv")
+			CSV.open(temp, "w", :col_sep => "\t") do |temp_csv|
+				CSV.parse(r.body.match(/^.*\n/).to_s, :col_sep => "\t") do |orig|
+					temp_csv << orig
+				end
+				CSV.parse(r.body.sub(/.*\n/,''), :col_sep => "\t") do |orig|
+					temp_csv << [collarName] + orig.to_a
+				end
+			end
+			FileUtils.mv(temp, outputCSV, :force => true)
+		end
 	end
 end
 
