@@ -14,8 +14,11 @@ require 'csv'
 
 # login stuff
 url = "https://www.vectronic-wildlife.com"
-userID = "cadfw1"
-dbName = "desertbighorn"
+# userID = "cadfw1"
+# dbName = "desertbighorn"
+# password = "snbsrp407"
+userID = "snbs"
+dbName = "sierrabighorn"
 password = "snbsrp407"
 loginParams = { 'type' => 'full',
 	'DB' => dbName, 
@@ -35,7 +38,7 @@ CSV_DELIM = "\t"
 # Date Information
 dateNow = Date.today
 periodMonths = 1
-dateStart = dateNow << periodMonths
+dateStart = (dateNow << periodMonths) - 2
 periodString = dateStart.strftime("%Y%m%d") + "-" + 
  	dateNow.strftime("%Y%m%d")
 startDateStr = dateStart.strftime("%Y-%m-%d")
@@ -75,8 +78,17 @@ collarList.each do |collar|
 		doc = a.page.parser
 		caption = doc.xpath('//table//caption').text
 		name = caption.split[0]
-		animalID = caption.scan(/Animal ID: (\d+)/)[0][0]
-		sex = caption.scan(/Gender: [A-Za-z]+/).first.split[1]
+		if caption.scan(/Animal ID: (\d+)/)[0] then 
+			puts caption.scan(/Animal ID: (\d+)/)
+			animalID = caption.scan(/Animal ID: (\d+)/)[0].to_s.match(/\d/)[0]
+		else
+			animalID = "_"
+		end
+		if caption.scan(/Gender: [A-Za-z]+/).first then
+			sex = caption.scan(/Gender: [A-Za-z]+/).first.split[1]
+		else 
+			sex = "_"
+		end
 		header = ["Name", "Animal_ID", "Sex"]
 		rowStart = [name, animalID, sex]
 		doc.xpath('//table//thead/th').each {|cell| header.push(cell.text)}
