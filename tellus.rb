@@ -18,12 +18,18 @@
 require 'mechanize'
 require 'open-uri'
 require 'optparse'
+require 'optparse/date'
 require 'csv'
 require 'fileutils'
 require 'tempfile'
 
 # Command Line Options
-options = {:user => nil, :password => nil, :dir => "./data/tellus/"}
+options = {:user => nil, 
+		   :password => nil, 
+		   :dir => "./data/tellus/",
+		   :beginDate => Date.today,
+		   :endDate => Date.today
+}
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
 	opts.on('-u', '--username user', 'Username') do |user|
@@ -39,13 +45,19 @@ parser = OptionParser.new do |opts|
 		puts opts
 		exit
 	end
+	opts.on('-b', '--begin [date]', Date, 
+			'Beginning date to retrieve data') do |beginDate|
+		options[:beginDate] = beginDate
+	end
+	opts.on('-e', '--end [date]', Date,
+			'Ending date to retrieve data') do |endDate|
+		options[:endDate] = endDate
+	end
 end
 parser.parse!
 
 # Login Information
 tellusURL = "http://tellus.televilt.se/"
-#tellusLogin = "Clinton@osu"
-#tellusPassword = "8c000c"
 
 tellusLogin = options[:user] 
 tellusPassword = options[:password]
@@ -54,10 +66,15 @@ tellusPassword = options[:password]
 downloadDir = options[:dir] 
 
 # Date Information
+# Changed to reflect new cli options
 dateNow = Date.today
 periodMonths = 1
-dateStart = dateNow << periodMonths
-periodString = dateStart.strftime("%Y%m%d") + "-" + dateNow.strftime("%Y%m%d")
+#dateStart = dateNow << periodMonths
+dateStart = options[:beginDate]
+# periodString = dateStart.strftime("%Y%m%d") + "-" + dateNow.strftime("%Y%m%d")
+periodString = options[:beginDate].strftime("%Y%m%d") +
+			"-" +
+			options[:endDate].strftime("%Y%m%d")
 
 # Initialize browsing agent
 a = Mechanize.new
