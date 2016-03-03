@@ -71,10 +71,9 @@ dateNow = Date.today
 periodMonths = 1
 #dateStart = dateNow << periodMonths
 dateStart = options[:beginDate]
+dateEnd = options[:endDate]
 # periodString = dateStart.strftime("%Y%m%d") + "-" + dateNow.strftime("%Y%m%d")
-periodString = options[:beginDate].strftime("%Y%m%d") +
-			"-" +
-			options[:endDate].strftime("%Y%m%d")
+periodString = dateStart.strftime("%Y%m%d") + "-" + dateEnd.strftime("%Y%m%d")
 
 # Initialize browsing agent
 a = Mechanize.new
@@ -106,6 +105,9 @@ pageLinks.each do |pageLink|
 		downloadForm.field_with(:name => /start_year/).value = dateStart.year
 		downloadForm.field_with(:name => /start_month/).value = dateStart.month
 		downloadForm.field_with(:name => /start_day/).value = dateStart.day
+		downloadForm.field_with(:name => /end_year/).value = dateEnd.year
+		downloadForm.field_with(:name => /end_month/).value = dateEnd.month
+		downloadForm.field_with(:name => /end_day/).value = dateEnd.day
 		r = a.submit(downloadForm, downloadButton)
 		unless r.body.match(/(.*)No data.+/) then
 			outputCSV = downloadDir+r.filename

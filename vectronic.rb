@@ -11,15 +11,64 @@ require 'mechanize'
 require 'open-uri'
 require 'fileutils'
 require 'csv'
+require 'optparse'
+require 'optparse/date'
+require 'geoutm'
+
 
 # login stuff
 url = "https://www.vectronic-wildlife.com"
+
+
+# Command Line Options
+options = {:user => "cadfw1",
+		   :db => "desertbighorn",
+		   :password => nil, 
+		   :dir => "./data/vectronic/",
+		   :beginDate => Date.today,
+		   :endDate => Date.today
+}
+parser = OptionParser.new do |opts|
+	opts.banner = "Usage: vectronic.rb [options]"
+	opts.on('-u', '--username user', 'Username') do |user|
+		options[:user] = user
+	end
+	opts.on('-D', '--database [database]', 'db name') do |db|
+		options[:db] = db
+	end
+	opts.on('-p', '--password password', 'Password') do |password|
+		options[:password] = password
+	end
+	opts.on('-d', '--dir dir', 'Directory') do |dir|
+		options[:dir] = dir
+	end
+	opts.on('-h', '--help', 'Displays Help') do
+		puts opts
+		exit
+	end
+	opts.on('-b', '--begin [date]', Date, 
+			'Beginning date to retrieve data') do |beginDate|
+		options[:beginDate] = beginDate
+	end
+	opts.on('-e', '--end [date]', Date,
+			'Ending date to retrieve data') do |endDate|
+		options[:endDate] = endDate
+	end
+end
+parser.parse!
+
 # userID = "cadfw1"
 # dbName = "desertbighorn"
 # password = "snbsrp407"
-userID = "snbs"
-dbName = "sierrabighorn"
-password = "snbsrp407"
+# userID = "snbs"
+# dbName = "sierrabighorn"
+# password = "snbsrp407"
+
+userID = options[:user]
+dbName = options[:db]
+password = options[:password]
+
+
 loginParams = { 'type' => 'full',
 	'DB' => dbName, 
 	'UID' =>  userID, 
@@ -36,13 +85,19 @@ FileUtils::mkdir_p downloadDir unless File.exists?(downloadDir)
 CSV_DELIM = "\t"
 
 # Date Information
-dateNow = Date.today
-periodMonths = 1
-dateStart = (dateNow << periodMonths) - 2
-periodString = dateStart.strftime("%Y%m%d") + "-" + 
- 	dateNow.strftime("%Y%m%d")
+dateStart = options[:beginDate]
+dateEnd = options[:endDate]
 startDateStr = dateStart.strftime("%Y-%m-%d")
-endDateStr = dateNow.strftime("%Y-%m-%d")
+endDateStr = dateEnd.strftime("%Y-%m-%d")
+periodString = dateStart.strftime("%Y-%m-%d") + "-" +
+	dateEnd.strftime("%Y-%m-%d")
+# dateNow = Date.today
+# periodMonths = 1
+# dateStart = (dateNow << periodMonths) - 2
+# periodString = dateStart.strftime("%Y%m%d") + "-" + 
+#  	dateNow.strftime("%Y%m%d")
+# startDateStr = dateStart.strftime("%Y-%m-%d")
+# endDateStr = dateNow.strftime("%Y-%m-%d")
 
 # Initialize browsing agent
 a = Mechanize::new
