@@ -62,8 +62,9 @@ tellusURL = "http://tellus.televilt.se/"
 tellusLogin = options[:user] 
 tellusPassword = options[:password]
 
-# Download info
-downloadDir = options[:dir] 
+# Download info 
+downloadDir = options[:dir].gsub(/([^\/]$)/, '\1/') # append / if none
+FileUtils::mkdir_p downloadDir unless File.exists?(downloadDir)
 
 # Date Information
 # Changed to reflect new cli options
@@ -80,13 +81,21 @@ a = Mechanize.new
 a.pluggable_parser.csv = Mechanize::Download
 
 # Login
+
+puts "loading URL: " + tellusURL
+
 a.get(tellusURL)
 loginForm = a.page.form
 loginForm.field_with(:name => /user/).value = tellusLogin
 loginForm.field_with(:name => /pass/).value= tellusPassword
 loginForm.field_with(:name => /duration/).value= 480
 loginButton = loginForm.button_with(:name => /login/)
+
+puts "logging in as " + tellusLogin
+
 a.submit(loginForm, loginButton)
+
+
 
 # Get download links
 pageLinks = a.page.links_with(:text => /Position/)
@@ -99,6 +108,9 @@ pageLinks.each do |pageLink|
 	# Download data for each collar for appropriate dates
 	collarLinks = dataPage.links_with(:text => "Download Data")
 	collarLinks.each do |collarLink|
+		
+		puts "downlaoding data from " + collarLink.pretty_inspect
+
 		collarPage = collarLink.click
 		downloadForm = collarPage.forms[1]
 		downloadButton = downloadForm.button_with(:name => /download/)
@@ -110,7 +122,7 @@ pageLinks.each do |pageLink|
 		downloadForm.field_with(:name => /end_day/).value = dateEnd.day
 		r = a.submit(downloadForm, downloadButton)
 		unless r.body.match(/(.*)No data.+/) then
-			outputCSV = downloadDir+r.filename
+			outputCSV = downloadDir + r.filename
 			collarName = r.filename.scan(/[^_]+/).first
 			2.times { r.body.sub!(/.*\n/,'') } 		# remove first 2 lines of csv content
 			r.body.sub!(/^/,"Collar\t") 			# add a Collar column 
@@ -124,6 +136,8 @@ pageLinks.each do |pageLink|
 					temp_csv << [collarName] + orig.to_a
 				end
 			end
+			
+			puts "saving file as" + outputCSV
 			FileUtils.mv(temp, outputCSV, :force => true)
 		end
 	end
