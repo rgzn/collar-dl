@@ -70,7 +70,8 @@ urlLogin = "https://www.vectronic-wildlife.com/login.php?DB=" +
 	dbName + "&PW=" + password + "&UID=" + userID + "&type=full"
 
 #Download info
-downloadDir = "./data/vectronic/" + dbName + "/"
+downloadDir = options[:dir].gsub(/([^\/]$)/, '\1/') # append / if none
+downloadDir += dbName + "/"
 FileUtils::mkdir_p downloadDir unless File.exists?(downloadDir)
 #class AttachmentSaver < Mechanize::File
 #	attr_reader :gdf
