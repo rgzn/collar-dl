@@ -6,10 +6,12 @@
 # It ignores collars with no data for the 
 # specified time period.
 
+# Use bundled environment:
+require 'bundler/setup'
 
 # Windows has special needs:
 require 'os' 
-if OS.windows? then require 'certified'
+require 'certified' if OS.windows?
 
 require 'nokogiri'  		# HTML parsing gem
 require 'open-uri'  		# http access
@@ -195,4 +197,3 @@ if options[:verbose]
 	puts "Finished downloading data, exiting now."
 end
 
-end
