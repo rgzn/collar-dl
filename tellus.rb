@@ -208,8 +208,12 @@ pageLinks.each do |pageLink|
 			if options[:verbose] 
 				puts "saving file as: " + outputCSV
 			end
-
-			FileUtils.mv(temp, outputCSV, :force => true)
+			
+			#binding.pry
+			
+			FileUtils.copy(temp, outputCSV)
+			temp.close
+			temp.unlink
 		else
 			puts r.body if options[:verbose]
 		end
