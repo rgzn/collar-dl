@@ -31,64 +31,6 @@ require 'fileutils'
 require 'tempfile'
 
 
-
-#  ugh???
-
-# class Mechanize::HTTP::Agent
-  # MAX_RESET_RETRIES = 10
-
-  # # We need to replace the core Mechanize HTTP method:
-  # #
-  # #   Mechanize::HTTP::Agent#fetch
-  # #
-  # # with a wrapper that handles the infamous "too many connection resets"
-  # # Mechanize bug that is described here:
-  # #
-  # #   https://github.com/sparklemotion/mechanize/issues/123
-  # #
-  # # The wrapper shuts down the persistent HTTP connection when it fails with
-  # # this error, and simply tries again. In practice, this only ever needs to
-  # # be retried once, but I am going to let it retry a few times
-  # # (MAX_RESET_RETRIES), just in case.
-  # #
-  # def fetch_with_retry(
-    # uri,
-    # method    = :get,
-    # headers   = {},
-    # params    = [],
-    # referer   = current_page,
-    # redirects = 0
-  # )
-    # action      = "#{method.to_s.upcase} #{uri.to_s}"
-    # retry_count = 0
-
-    # begin
-      # fetch_without_retry(uri, method, headers, params, referer, redirects)
-    # rescue Net::HTTP::Persistent::Error => e
-      # # Pass on any other type of error.
-      # raise unless e.message =~ /too many connection resets/
-
-      # # Pass on the error if we've tried too many times.
-      # if retry_count >= MAX_RESET_RETRIES
-        # puts "**** WARN: Mechanize retried connection reset #{MAX_RESET_RETRIES} times and never succeeded: #{action}"
-        # raise
-      # end
-
-      # # Otherwise, shutdown the persistent HTTP connection and try again.
-      # puts "**** WARN: Mechanize retrying connection reset error: #{action}"
-      # retry_count += 1
-      # self.http.shutdown
-      # retry
-    # end
-  # end
-
-  # # Alias so #fetch actually uses our new #fetch_with_retry to wrap the
-  # # old one aliased as #fetch_without_retry.
-  # alias_method :fetch_without_retry, :fetch
-  # alias_method :fetch, :fetch_with_retry
-# end
-
-
 ############################################
 
 
@@ -128,6 +70,12 @@ parser = OptionParser.new do |opts|
 		options[:verbose] = v
 		puts "Verbose output ON ..."
 	end
+
+	opts.on("-z", "--debug", "Run in debug mode with Pry") do |z|
+		options[:debug] = TRUE
+		require 'pry'
+	end
+		
 end
 parser.parse!
 
@@ -179,7 +127,7 @@ loginButton = loginForm.button_with(:name => /login/)
 
 if options[:verbose] 
 	puts "Logging on with credentials: " 
-	loginForm.fields.each { |f| puts f.name + ": " + f.value}
+	loginForm.fields.each { |f| puts f.name.to_s + ": " + f.value.to_s}
 end
  
 loginPage = a.page
@@ -193,16 +141,32 @@ rescue
 	a.submit(loginForm, loginButton)
 end
 
-
-if options[:verbose] 
-	puts "Logged on." 
+if a.page.link_with(:text => /log out/i).nil?
+	if options[:verbose]
+		puts "Failed to log in with specified credentials"
+		puts "Exiting program"
+	end
+	exit
+else
+	if options[:verbose]
+		puts "Login successful."
+	end
 end
 
 
 # Get download links
 pageLinks = a.page.links_with(:text => /Position/)
-dataPage = pageLinks.first.click
-pageLinks += dataPage.links_with(:href => /page=\d$/)
+
+if pageLinks.empty? 
+	if options[:verbose]
+		puts "Failed to find position data page"
+		puts "Exiting program"
+	end
+	exit
+else
+	dataPage = pageLinks.first.click
+	pageLinks += dataPage.links_with(:href => /page=\d$/)
+end
 
 # Loop over download pages, start with current page
 pageLinks.each do |pageLink|
@@ -211,7 +175,9 @@ pageLinks.each do |pageLink|
 	collarLinks = dataPage.links_with(:text => "Download Data")
 	collarLinks.each do |collarLink|
 		
-		puts "downlaoding data from " + collarLink.pretty_inspect
+		if options[:verbose]
+			puts "downloading data from:  " + tellusURL + collarLink.href.to_s
+		end
 
 		collarPage = collarLink.click
 		downloadForm = collarPage.forms[1]
@@ -239,13 +205,24 @@ pageLinks.each do |pageLink|
 				end
 			end
 			
-			puts "saving file as" + outputCSV
+			if options[:verbose] 
+				puts "saving file as: " + outputCSV
+			end
+
 			FileUtils.mv(temp, outputCSV, :force => true)
+		else
+			puts r.body if options[:verbose]
 		end
+
 	end
 end
 
 # Logout
+if options[:verbose]
+	puts "Finished with downloads"
+	puts "Logging out..."
+end
+
 dataPage.link_with(:text => "Log out").click
 
 
