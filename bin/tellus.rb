@@ -36,6 +36,8 @@ require 'tempfile'
 
 
 # Command Line Options
+ARGV.push('-h') if ARGV.empty?		# show help if no arguments
+
 options = {:user => nil, 
 		   :password => nil, 
 		   :dir => "./data/tellus/",
@@ -44,6 +46,7 @@ options = {:user => nil,
 }
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
+	
 	opts.on('-u', '--username user', 'Username') do |user|
 		options[:user] = user
 	end
@@ -65,18 +68,17 @@ parser = OptionParser.new do |opts|
 			'Ending date to retrieve data') do |endDate|
 		options[:endDate] = endDate
 	end
-	
 	opts.on("-v", "--[no-]verbose", "Run verbosely") do |v| 
 		options[:verbose] = v
 		puts "Verbose output ON ..."
 	end
-
 	opts.on("-z", "--debug", "Run in debug mode with Pry") do |z|
 		options[:debug] = TRUE
 		require 'pry'
 	end
 		
 end
+
 parser.parse!
 
 # Login Information

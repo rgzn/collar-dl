@@ -21,6 +21,9 @@ url = "https://www.vectronic-wildlife.com"
 
 
 # Command Line Options
+
+ARGV.push('-h') if ARGV.empty?		# show help if no arguments
+
 options = {:user => "cadfw1",
 		   :db => "desertbighorn",
 		   :password => nil, 
