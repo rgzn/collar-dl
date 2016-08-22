@@ -28,4 +28,14 @@ eg.
 
 5. If you would like to run these commands from any directory, add the collar-dl/bin directory to your PATH variable.
 
+## Windows Requirements help: 
+
+Install ruby from : http://rubyinstaller.org/
+Use version 2.3.1 (x64)
+
+Install bundler from command prompt (Use Git Bash or Powershell (x86) )
+> gem install bundler
+
+
+
 
