@@ -40,7 +40,7 @@ ARGV.push('-h') if ARGV.empty?		# show help if no arguments
 
 options = {:user => nil, 
 		   :password => nil, 
-		   :dir => "./data/tellus/",
+		   :dir => "../data/tellus/",
 		   :beginDate => Date.today,
 		   :endDate => Date.today
 }
@@ -72,7 +72,7 @@ parser = OptionParser.new do |opts|
 		options[:verbose] = v
 		puts "Verbose output ON ..."
 	end
-	opts.on("-z", "--debug", "Run in debug mode with Pry") do |z|
+	opts.on("-z", "--debug", "Run in debug mode") do |z|
 		options[:debug] = TRUE
 		require 'pry'
 	end
