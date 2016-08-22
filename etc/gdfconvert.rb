@@ -2,7 +2,7 @@
 #
 #
 
-require_relative 'gdf.rb'
+require_relative '../lib/gdf.rb'
 
 inputFiles = ARGV
 

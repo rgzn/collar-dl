@@ -13,6 +13,28 @@ module GDF
 	DATE_FORMAT = "%Y-%m-%d"
 	TIME_FORMAT = "%H:%M:%S"
 	
+	# gdfs2csv
+	# batch convert gdfs to csv
+	def GDF::gdfs2csv(inputFiles, outputFile, delim = DELIM_DEFAULT)
+		outputHeader = GDF.new.get_csv_header(delim)
+		File.open(outputFile, 'w') do |f|
+			f << outputHeader
+		end
+		inputFiles.each do |filename|
+			if !File.file?(filename)
+				puts "#{filename} does not exit"
+			elsif ! ( File.extname(filename) =~ /\.gdf/i )
+				puts "#{filename} is not a gdf"
+			else
+				data = GDF.new(:filename => filename)
+				data.read(File.open(filename))
+				File.open(outputFile, 'a') do |f|
+					f << data.to_csv(delim)
+				end
+			end
+		end
+	end
+	
 	# Records within each Fix: ###################
 	
 	# Datetime

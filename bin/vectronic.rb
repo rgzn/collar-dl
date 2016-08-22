@@ -27,7 +27,7 @@ ARGV.push('-h') if ARGV.empty?		# show help if no arguments
 options = {:user => "cadfw1",
 		   :db => "desertbighorn",
 		   :password => nil, 
-		   :dir => "./data/vectronic/",
+		   :dir => "data/vectronic/",
 		   :beginDate => Date.today,
 		   :endDate => Date.today
 }

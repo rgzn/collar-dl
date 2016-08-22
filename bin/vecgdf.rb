@@ -21,7 +21,9 @@ require 'optparse'		# Cmd Line Input options
 require 'optparse/date'			
 require 'geoutm'		# UTM/LLA conversions
 require 'mechanize'		# web browsing
+require 'pry'
 
+require_relative '../lib/gdf.rb' # custom GDF module
 
 CSV_DELIM = "\t"
 
@@ -35,10 +37,12 @@ ARGV.push('-h') if ARGV.empty?		# show help if no arguments
 options = {	   :user => "cadfw1",
 		   :db => "desertbighorn",
 		   :password => nil, 
-		   :dir => "../data/vectronic/",
+		   :dir => "data/vectronic/",
 		   :beginDate => Date.today,
 		   :endDate => Date.today,
-		   :verbose => nil
+		   :verbose => nil,
+		   :csv => true,
+		   :csv_filename => nil
 }
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: vectronic.rb [options]"
@@ -70,7 +74,13 @@ parser = OptionParser.new do |opts|
 		options[:verbose] = v
 		puts "Verbose output ON ..."
 	end
-
+	
+	opts.on("-x", "--csv [CSV_FILENAME]", 
+			"Translate to CSV/TXT", 
+			" (using filename if supplied)") do |csv_arg|
+		options[:csv] = true
+		options[:csv_filename] = csv_arg || nil
+	end
 end
 parser.parse!
 
@@ -90,6 +100,7 @@ end
 userID = options[:user]
 dbName = options[:db]
 password = options[:password]
+
 
 # Build URL for http request to log in:
 loginParams = { 'type' => 'full',
@@ -161,6 +172,7 @@ if options[:verbose]
 	puts "Downloading collar data..."
 end
 
+downloadedGDFs = []
 collarList.each do |collar|
 
 	if options[:verbose] 
@@ -189,13 +201,36 @@ collarList.each do |collar|
 		if options[:verbose] 
 			puts "Saving data as " + downloadDir + r.filename + "..."
 		end
-		
-		r.save(downloadDir+r.filename)
+		gdfName = downloadDir + r.filename
+		r.save(gdfName)
+		downloadedGDFs.push(gdfName)
 	end
 	
 end
 
 if options[:verbose] 
-	puts "Finished downloading data, exiting now."
+	puts "Finished downloading data to " + downloadDir
 end
+
+if options[:csv]
+	if options[:verbose] 
+		puts "Converting GDF files to CSV..."
+	end
+	#binding.pry
+	if options[:csv_filename]
+		csvFileName = options[:csv_filename]
+	elsif options[:csv]
+		csvFileName = dbName + "_" + 
+			dateStart.strftime("%Y%m%d") + "-" + 
+			dateEnd.strftime("%Y%m%d") + ".txt"
+	end
+	GDF::gdfs2csv(downloadedGDFs, downloadDir + csvFileName, CSV_DELIM )
+	if options[:verbose] 
+		puts "The following GDF files were combined and saved as text in " + 
+			downloadDir + csvFileName + " :"
+		puts downloadedGDFs
+	end
+end
+
+
 
