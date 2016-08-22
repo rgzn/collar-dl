@@ -32,7 +32,21 @@ require 'tempfile'
 
 
 ############################################
+CSV_DELIM = '\t'
 
+def catCSV(inputFiles, outputFile)
+	if inputFiles.empty? then exit end
+	header = IO.readlines(inputFiles.first)[0]
+	File.open(outputFile, 'w') do |f|
+		f << header
+	end
+	inputFiles.each do |file|
+		content = IO.readlines(file)[1..-1]
+		File.open(outputFile, 'a') do |f|
+			content.each {|line| f << line}
+		end
+	end
+end
 
 
 # Command Line Options
@@ -40,9 +54,11 @@ ARGV.push('-h') if ARGV.empty?		# show help if no arguments
 
 options = {:user => nil, 
 		   :password => nil, 
-		   :dir => "../data/tellus/",
+		   :dir => "data/tellus/",
 		   :beginDate => Date.today,
-		   :endDate => Date.today
+		   :endDate => Date.today,
+		   :csv => nil, 
+		   :csv_filename => nil,
 }
 parser = OptionParser.new do |opts|
 	opts.banner = "Usage: tellus.rb [options]"
@@ -71,6 +87,12 @@ parser = OptionParser.new do |opts|
 	opts.on("-v", "--[no-]verbose", "Run verbosely") do |v| 
 		options[:verbose] = v
 		puts "Verbose output ON ..."
+	end
+	opts.on("-x", "--csv [CSV_FILENAME]", 
+			"Translate to single CSV/TXT", 
+			" (using filename if supplied)") do |csv_arg|
+		options[:csv] = true
+		options[:csv_filename] = csv_arg || nil
 	end
 	opts.on("-z", "--debug", "Run in debug mode") do |z|
 		options[:debug] = TRUE
@@ -170,6 +192,7 @@ else
 	pageLinks += dataPage.links_with(:href => /page=\d$/)
 end
 
+downloadedFiles = []
 # Loop over download pages, start with current page
 pageLinks.each do |pageLink|
 	dataPage = pageLink.click
@@ -214,6 +237,7 @@ pageLinks.each do |pageLink|
 			#binding.pry
 			
 			FileUtils.copy(temp, outputCSV)
+			downloadedFiles.push(outputCSV)
 			temp.close
 			temp.unlink
 		else
@@ -223,6 +247,7 @@ pageLinks.each do |pageLink|
 	end
 end
 
+
 # Logout
 if options[:verbose]
 	puts "Finished with downloads"
@@ -230,5 +255,25 @@ if options[:verbose]
 end
 
 dataPage.link_with(:text => "Log out").click
+
+if options[:csv] && downloadedFiles.any?
+	if options[:verbose] 
+		puts "Converting files to single CSV..."
+	end
+	#binding.pry
+	if options[:csv_filename]
+		csvFileName = options[:csv_filename]
+	elsif options[:csv]
+		csvFileName = tellusLogin + "_" + 
+			dateStart.strftime("%Y%m%d") + "-" + 
+			dateEnd.strftime("%Y%m%d") + ".txt"
+	end
+	catCSV(downloadedFiles, downloadDir + csvFileName)	
+	if options[:verbose] 
+		puts "The following files were combined and saved as text in " + 
+			downloadDir + csvFileName + " :"
+		puts downloadedFiles
+	end
+end
 
 

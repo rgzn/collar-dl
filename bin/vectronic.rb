@@ -117,6 +117,7 @@ a.page.parser.css("div#animalSelection option").each do |n|
 	collarList.push(n.text)
 end
 
+downloadedFiles = []
 collarList.each do |collar|
 	dataUrl = url + "/getData.php?"
 	animalStr = "animal=" + collar
