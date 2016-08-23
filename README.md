@@ -53,7 +53,7 @@ Usage:
     -x, --csv [CSV_FILENAME]         Translate to single CSV/TXT (using filename if supplied)
     -z, --debug                      Run in debug mode           
 
-    Usage: vectronic.rb [options]      
+    Usage: vectgdf.rb [options]      
     -u, --username user              Username     
     -D, --database [database]        db name     
     -p, --password password          Password     
