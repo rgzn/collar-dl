@@ -24,9 +24,9 @@ eg.
     > bundle install
 
 4. Test installation by running the two main commands in the bin directory:
-    > cd bin
-    > ./tellus.rb
-    > ./vecgdf.rb
+    > cd bin    
+    > ruby tellus.rb    
+    > ruby vecgdf.rb    
 
 5. If you would like to run these commands from any directory, add the collar-dl/bin directory to your PATH variable.
 
