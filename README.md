@@ -7,8 +7,8 @@ ECEF XYZ coordinates into lat lon. These are used in the vecgdf.rb script, and t
 
 ## Requirements:
 
-- Ruby (tested on version 2.3.1) 
-- bundler
+- Ruby (tested on version 2.3.1)    https://www.ruby-lang.org/en/
+- bundler   http://bundler.io/
 
 ## Install:
 
