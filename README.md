@@ -66,7 +66,7 @@ Usage:
                                       (using filename if supplied)     
                                       
 ## Examples:
-    A couple different ways to use these scripts: 
+A couple different ways to use these scripts: 
     
     > ruby tellus.rb -u Clinton@osu -p ****** -d tellusTest -b 20160720 -e 20160801 -v -x
     > ./vecgdf.rb -u cadfw1 -p ****** -D desertbighorn --dir ~/Desktop/myAutoDL -x vectronic_combined.csv 
