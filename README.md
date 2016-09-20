@@ -1,9 +1,10 @@
 # collar-dl
 
 This is a collection of software tools to scrape, process, and manage gps collar data. 
-The current version 1 supports downloading from tellus and vectronic collars. I hope to add Lotek, ats, etc.
+The current version 1 supports downloading from tellus, vectronic, and sirtrack collars. I hope to add Lotek, ats, etc. 
 It would also be nice to add a GUI. Note this repository also includes tools to convert GDF files into CSVs, and tools to convert
 ECEF XYZ coordinates into lat lon. These are used in the vecgdf.rb script, and the modules that do this are in the /lib directory. 
+This project is continually updated. If there is a problem, please check this repo for updates and/or contact me. 
 
 ## Summary of Contents:
 collar-dl is a repository containing the ruby scripts and libraries to run automated downloads from gps collar manufacturers. 
