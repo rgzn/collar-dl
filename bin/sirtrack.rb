@@ -16,7 +16,7 @@ options = {:user => nil,
 		   :csv_filename => nil,
 }
 parser = OptionParser.new do |opts|
-	opts.banner = "Usage: tellus.rb [options]"
+	opts.banner = "Usage: sirtrack.rb [options]"
 	
 	opts.on('-u', '--username user', 'Username') do |user|
 		options[:user] = user
@@ -59,6 +59,7 @@ projects_url = "https://data.sirtrack.com/restlet/projects"
 user = options[:user]
 password = options[:password]
 download_dir = options[:dir].gsub(/([^\/]$)/, '\1/') # append / if none
+output_file = options[:csv_filename]
 FileUtils::mkdir_p download_dir unless File.exists?(download_dir)
 
 login_body = "{id:2,method:\"loginFrontService.login\",params:[\"#{user}\", \"#{password}\"]}"
