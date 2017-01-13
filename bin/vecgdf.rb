@@ -124,8 +124,8 @@ endDateStr = dateEnd.strftime("%Y-%m-%d")
 periodString = dateStart.strftime("%Y-%m-%d") + "-" +
 	dateEnd.strftime("%Y-%m-%d")
 dateStr = "&startDate=" + startDateStr + "&endDate=" + endDateStr
-
 # Initialize browsing agent
+
 a = Mechanize::new
 a.pluggable_parser.csv = Mechanize::Download
 # a.pluggable_parser.gdf = Mechanize::Download
