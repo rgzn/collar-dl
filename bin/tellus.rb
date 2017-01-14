@@ -200,9 +200,9 @@ pageLinks.each do |pageLink|
 	collarLinks = dataPage.links_with(:text => "Download Data")
 	collarLinks.each do |collarLink|
 		
-		if options[:verbose]
-			puts "downloading data from:  " + tellusURL + collarLink.href.to_s
-		end
+		# if options[:verbose]
+			# puts "downloading data from:  " + tellusURL + collarLink.href.to_s
+		# end
 
 		collarPage = collarLink.click
 		downloadForm = collarPage.forms[1]
@@ -231,7 +231,7 @@ pageLinks.each do |pageLink|
 			end
 			
 			if options[:verbose] 
-				puts "saving file as: " + outputCSV
+				puts "Downloading #{collarName} data to file: #{outputCSV}"
 			end
 			
 			#binding.pry
