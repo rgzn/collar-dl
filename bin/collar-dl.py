@@ -16,7 +16,9 @@ running = True
 
 @Gooey(optional_cols=2, program_name="GPS Collar Data Download")
 
-
+# Force stdout cache to 0, so that Gooey gets it immediately:
+# nonbuffered_stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+# sys.stdout = nonbuffered_stdout
 
 def main():
   description_msg = 'Initiate batch downloads GPS collar data' \
@@ -45,10 +47,10 @@ def main():
 #    -z, --debug                      Run in debug mode
 
 
-  sirtrack_parser.add_argument('-u', '--username', type=str,
+  sirtrack_parser.add_argument('username', type=str,
                                help='User name for your account', 
                                default='david.german@wildlife.ca.gov')
-  sirtrack_parser.add_argument('-p', '--password', type=str,
+  sirtrack_parser.add_argument('password', type=str,
                                help='Password for your account (not secure)')
   sirtrack_parser.add_argument('-d', '--dir', type=str,
                                help='Directory in which to download data files',
@@ -78,11 +80,11 @@ def main():
     # -v, --[no-]verbose               Run verbosely
     # -x, --csv [CSV_FILENAME]         Translate to CSV/TXT
                             
-  vectronic_parser.add_argument('-u', '--username', type=str,
+  vectronic_parser.add_argument('username', type=str,
                                help='User name for your account', default='snbs')
-  vectronic_parser.add_argument('-p', '--password', type=str,
+  vectronic_parser.add_argument('password', type=str,
                                help='Password for your account (not secure)')
-  vectronic_parser.add_argument('-D', '--database', type=str,
+  vectronic_parser.add_argument('database', type=str,
                                 help='database name',default='sierrabighorn')
   vectronic_parser.add_argument('-d', '--dir', type=str, widget="DirChooser",
                                help='Directory in which to download data files', default='data')
@@ -112,9 +114,9 @@ def main():
 #    -x, --csv [CSV_FILENAME]         Translate to single CSV/TXT
 #                                      (using filename if supplied)
 #    -z, --debug                      Run in debug mode
-  tellus_parser.add_argument('-u', '--username', type=str,
+  tellus_parser.add_argument('username', type=str,
                                help='User name for your account', default='david@desert')
-  tellus_parser.add_argument('-p', '--password', type=str,
+  tellus_parser.add_argument('password', type=str,
                                help='Password for your account (not secure)')
   tellus_parser.add_argument('-d', '--dir', type=str, widget="DirChooser",
                                help='Directory in which to download data files', default='data')
