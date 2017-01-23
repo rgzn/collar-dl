@@ -66,7 +66,7 @@ def main():
 #                               help='Translate to a single CSV/TXT file',
 #                               default=sirtrack_filename)
   sirtrack_parser.add_argument('-v', '--verbose', action='store_true',
-                                help='output details of downloading process') 
+                                help='output details of downloading process', default=True) 
                             
   #### Vectronic   #### 
   # Usage: vectronic.rb [options]
@@ -94,10 +94,10 @@ def main():
                                 help='ending date to retrieve data from')                                       
   vectronic_filename = 'vectronic_' + time.strftime("%Y%m%d") + '.txt'                            
   vectronic_parser.add_argument('-x', '--csv', type=str, 
-                               help='Translate to a single CSV/TXT file. Enter name of file.',
                                default=vectronic_filename)                            
+                                help='Translate to a single CSV/TXT file. Enter name of file.',
   vectronic_parser.add_argument('-v', '--verbose', action='store_true',
-                                help='output details of downloading process')                             
+                                help='output details of downloading process', default=True)                             
                                
   
   #### Vectronic    #####
@@ -129,7 +129,7 @@ def main():
                                help='Translate to a single CSV/TXT file. Enter name of file.',
                                default=tellus_filename)                            
   tellus_parser.add_argument('-v', '--verbose', action='store_true',
-                                help='output details of downloading process')        
+                                help='output details of downloading process', default=True)        
 
 
   #### Convert arguments to command line string: ####
