@@ -14,7 +14,9 @@ from subprocess import Popen, PIPE
 
 running = True
 
-@Gooey(optional_cols=2, program_name="GPS Collar Data Download")
+@Gooey(optional_cols=2,
+  program_name="GPS Collar Data Download",
+  image_dir="../etc/images")
 
 # Force stdout cache to 0, so that Gooey gets it immediately:
 # nonbuffered_stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
@@ -93,9 +95,9 @@ def main():
   vectronic_parser.add_argument('-e', '--end', type=str, widget='DateChooser',
                                 help='ending date to retrieve data from')                                       
   vectronic_filename = 'vectronic_' + time.strftime("%Y%m%d") + '.txt'                            
-  vectronic_parser.add_argument('-x', '--csv', type=str, 
+  vectronic_parser.add_argument('-x', '--csv', type=str, help='Translate to a single CSV/TXT file. Enter name of file.',
                                default=vectronic_filename)                            
-                                help='Translate to a single CSV/TXT file. Enter name of file.',
+                                
   vectronic_parser.add_argument('-v', '--verbose', action='store_true',
                                 help='output details of downloading process', default=True)                             
                                
