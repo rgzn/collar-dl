@@ -230,6 +230,7 @@ if options[:csv]
 			downloadDir + csvFileName + " :"
 		puts downloadedGDFs
 	end
+  puts "Data downloaded and saved in file:" +  downloadDir + csvFileName
 end
 
 

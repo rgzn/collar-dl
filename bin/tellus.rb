@@ -274,6 +274,7 @@ if options[:csv] && downloadedFiles.any?
 			downloadDir + csvFileName + " :"
 		puts downloadedFiles
 	end
+  puts "Data downloaded and saved as: " + downloadDir + csvFileName
 end
 
 
