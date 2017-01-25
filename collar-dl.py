@@ -97,7 +97,7 @@ def main():
                                help='Password for your account (not secure)')
   sirtrack_parser.add_argument('-d', '--dir', type=str,
                                help='Directory in which to download data files',
-                               default='../data')
+                               default='data')
 #  sirtrack_parser.add_argument('-b', '--begin', type=str, widget='DateChooser',
 #                                help='beginning date to retrieve data from')          
 #  sirtrack_parser.add_argument('-e', '--end', type=str, widget='DateChooser',
@@ -130,7 +130,7 @@ def main():
   vectronic_parser.add_argument('database', type=str,
                                 help='database name',default='sierrabighorn')
   vectronic_parser.add_argument('-d', '--dir', type=str, widget="DirChooser",
-                               help='Directory in which to download data files', default='../data')
+                               help='Directory in which to download data files', default='data')
   vectronic_parser.add_argument('-b', '--begin', type=str, widget='DateChooser',
                                 help='beginning date to retrieve data from')          
   vectronic_parser.add_argument('-e', '--end', type=str, widget='DateChooser',
@@ -162,7 +162,7 @@ def main():
   tellus_parser.add_argument('password', type=str,
                                help='Password for your account (not secure)')
   tellus_parser.add_argument('-d', '--dir', type=str, widget="DirChooser",
-                               help='Directory in which to download data files', default='../data')
+                               help='Directory in which to download data files', default='data')
   tellus_parser.add_argument('-b', '--begin', type=str, widget='DateChooser',
                                 help='beginning date to retrieve data from')          
   tellus_parser.add_argument('-e', '--end', type=str, widget='DateChooser',
