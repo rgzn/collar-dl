@@ -113,7 +113,7 @@ urlLogin = url + "/login.php?DB=" +
 
 #Download info
 downloadDir = options[:dir].gsub(/([^\/]$)/, '\1/') # append / if none
-downloadDir += dbName + "/"
+#downloadDir += dbName + "/"
 FileUtils::mkdir_p downloadDir unless File.exists?(downloadDir)
 
 # Date Information
