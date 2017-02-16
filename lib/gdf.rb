@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
-#
+# 
+# gdf 
+# This moduke defines the file format for .gdf files
+# these are the binary data files used to specify gps records 
+# by vectronic and lotek
+
 
 require 'bindata'
 require 'geoutm'
@@ -76,6 +81,10 @@ module GDF
 
 	end
 
+  # MortStatus
+  # is the collar on mortality?
+  # types of mort alert are in 
+  # MORT_STATUS_VALUES array
 	class MortStatus < BinData::Primitive
 		bit3 :mort_idx
 
@@ -96,7 +105,9 @@ module GDF
 
 	end
 	
-
+  # FixType
+  # class of gps fix
+  # possible values are in FIX_TYPES array
 	class FixType < BinData::Primitive
 		bit5 :fix_idx
 
@@ -116,6 +127,8 @@ module GDF
 		end
 	end
 
+  # Degree of Precision
+  # measure of fix precision
 	class DOP < BinData::Primitive
 		endian :big
 		uint8 :dop_byte
@@ -129,6 +142,8 @@ module GDF
 		end
 	end
 
+  # Satellite 
+  # satellite number and SNR of received signal
 	class Sat < BinData::Record
 		bit5 :num
 		bit3 :snr_raw
@@ -137,11 +152,16 @@ module GDF
 		}
 	end
 
+  # Sattellite Array
+  # array of all possible sats to receive from
 	class SatArray < BinData::Array
 		default_parameters :type => :sat,
 			:initial_length => 11
 	end
-
+  
+  # Error 
+  # Not sure what this means exactly
+  # but values are either NA or range from 0.2 to 50.8
 	class Error < BinData::Primitive
 		endian :big
 		uint8  :error_raw
@@ -160,7 +180,8 @@ module GDF
 	end
 
 
-
+  # Voltage
+  # battery potential in volts
 	class Voltage < BinData::Primitive
 		endian :big
 		uint8 :v_byte
@@ -174,6 +195,8 @@ module GDF
 		end
 	end
 
+  # Temperature 
+  # in celsius
 	class Temperature < BinData::Primitive
 		endian :big
 		uint8 :temp_byte
@@ -311,23 +334,31 @@ module GDF
 
 	# GDF
 	# Whole file
+  # including header, junk, and all fixes
 	class GDF < BinData::Record
 		default_parameter :filename => nil
 		virtual :file, :value => :filename
 
+    ## File format for a GDF is here ##
 		header 	:head
 		virtual :collarID, :value => lambda { head.collar_id }
 		junk	:preamble
 		array 	:fixes, :read_until => :eof do
 			fix :id => :collarID
 		end
-
+    ###########
+    
+    
+    ## Methods ##
+    
+    # return the header line for a csv
 		def get_csv_header(delim = DELIM_DEFAULT)
 			rowhead = Fix::row_names(delim)
 			rowhead = "No" + delim + rowhead
 			return rowhead
 		end
-
+    
+    # return all fixes as a csv
 		def to_csv(delim = DELIM_DEFAULT )
 			csv = "" 
 			self.fixes.to_a.each_index do |i|
@@ -350,7 +381,7 @@ module GDF
 
 
 
-
+  # possible values for Mort status
 	MORT_STATUS_VALUES = 
 	[	'N/A',
 		'normal',
@@ -363,7 +394,7 @@ module GDF
 	]
 
 
-
+  # Possible values for fix type
 	FIX_TYPES = 
 		['No Fix',
 		'GPS-1 Sat',
@@ -621,8 +652,6 @@ module GDF
 		'Argos-Z',
 		'No Fix',
 		'No Fix']
-
-
-
+    
 end
 
