@@ -73,7 +73,13 @@ Install ruby from : http://rubyinstaller.org/
 Install bundler from command prompt (Use Git Bash or Powershell (x86) ) using the following command:
     > gem install bundler
 
-## GUI Usage
+## Windows GUI Usage
+
+The Windows executable collar-dl.exe is a pre-compiled GUI app that provides a dialog menu to run the ruby command-line scripts. 
+Just run this application and it should be self explanatory.
+This application is built with Python and Gooey from collar-dl.py.
+
+
 
 ## Command Line Usage
 
