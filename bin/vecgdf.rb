@@ -183,8 +183,18 @@ collarList.each do |collar|
 				"animal=" + collar +
 				dateStr + 
 				"&type=table&tz=-420&maxCount=9999999"
-	a.get(dataUrl)
-	
+  
+  # rescue routine to handle timeout errors:  
+  begin
+    a.get(dataUrl)
+	rescue
+    a.history.pop()
+    a.read_timeout = 20
+    a.get(dataUrl)
+    sleep(2)
+  end
+  
+  
 	linkToGdf = a.page.link_with(:text => /gdf/i)
 	
 	if options[:verbose] 
