@@ -298,7 +298,7 @@ module GDF
 				"ECEF Y",
 				"ECEF Z",
 				"Latitude",
-				"Longitutde",
+				"Longitude",
 				"Height",
 				"Easting",
 				"Northing",
