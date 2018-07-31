@@ -271,7 +271,7 @@ module GDF
 				position.e.to_i.to_s + delim +
 				position.n.to_i.to_s + delim + 
 				degreeOfPrecision.to_s + delim + 
-				fixType + delim +
+				sprintf("%11.11s", fixType) + delim +
 				numSats.to_s + delim 
 			sats.each { |sat| s += sat.num.to_s + delim + sat.snr.to_s + delim }
 			s += mainV.to_s + delim +
