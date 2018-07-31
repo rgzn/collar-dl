@@ -265,9 +265,9 @@ module GDF
 				position.x.to_i.to_s + delim + 
 				position.y.to_i.to_s + delim + 
 				position.z.to_i.to_s + delim +
-				position.lat.round(5).to_s + delim +
-				position.lon.round(5).to_s + delim +
-				position.alt.round(2).to_s + delim +
+        sprintf("%0.05f",position.lat) + delim +
+        sprintf("%0.05f",position.lon) + delim +
+        sprintf("%0.02f",position.alt) + delim +
 				position.e.to_i.to_s + delim +
 				position.n.to_i.to_s + delim + 
 				degreeOfPrecision.to_s + delim + 
