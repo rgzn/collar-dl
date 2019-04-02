@@ -130,6 +130,8 @@ a = Mechanize::new
 a.pluggable_parser.csv = Mechanize::Download
 # a.pluggable_parser.gdf = Mechanize::Download
 
+# no ssl:
+a.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
 # Login:
 if options[:verbose] 
